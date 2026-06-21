@@ -16,6 +16,14 @@ create table contatos (
   created_at timestamptz not null default now()
 );
 
+alter table public.contatos enable row level security;
+
+create policy "Permitir leitura dos contatos"
+on public.contatos
+for select
+to anon
+using (true);
+
 insert into contatos (nome, telefone) values
   ('Mateus', '5511999999999'),
   ('João', '5511888888888'),
@@ -64,13 +72,14 @@ Preencha:
 
 ```dotenv
 SUPABASE_URL=https://seu-projeto.supabase.co
-SUPABASE_KEY=sua_chave_service_role
+SUPABASE_KEY=sua_chave_publishable_ou_anon
 ZAPI_INSTANCE_ID=id_da_instancia
 ZAPI_TOKEN=token_da_instancia
 ZAPI_CLIENT_TOKEN=client_token
 ```
 
-Use a chave `service_role` somente neste script executado no backend. Nunca envie
+Use a chave pública **Publishable** ou **anon** do Supabase. A policy criada no
+passo 1 concede somente leitura da tabela `contatos` para essa chave. Nunca envie
 o `.env` ao GitHub. O `ZAPI_CLIENT_TOKEN` é necessário quando a segurança por
 Client Token estiver habilitada na conta Z-API.
 
